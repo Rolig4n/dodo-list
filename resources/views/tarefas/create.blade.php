@@ -33,7 +33,7 @@
             <label for="data_vencimento">Vencimento:</label>
             <input type="date" id="data_vencimento" name="data_vencimento" required>
             <br>
-            <input id="status" name="status" value="Pendente" hidden>
+            <input id="status" name="status" value="{{ \App\Enum\StatusTarefa::PENDENTE }}" hidden>
             <br>
             <button class="btn btn-primary mt-3">Adicionar</button>
         </form>

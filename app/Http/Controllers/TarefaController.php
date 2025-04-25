@@ -11,7 +11,8 @@ class TarefaController extends Controller
 {
     public function index()
     {
-        return view('tarefas.index');
+        $tarefas = Tarefa::all();
+        return view('tarefas.index', ['tarefas' => $tarefas]);
     }
 
     public function create()
@@ -26,7 +27,7 @@ class TarefaController extends Controller
             'titulo' => 'required|string|max:255',
             'descricao' => 'required',
             'data_vencimento' => 'required|date',
-            //'status' => [Rule::enum(StatusTarefa::class)->only(StatusTarefa::PENDENTE)] ainda nao entendi como validar enum
+            'status' => [Rule::enum(StatusTarefa::class)]// ainda nao entendi como validar enum
         ]);
 
         $novaTarefa = Tarefa::create($data);
@@ -35,25 +36,37 @@ class TarefaController extends Controller
             ->with('success', 'Tarefa criada com sucesso!');
     }
 
+    public function edit(Tarefa $tarefa)
+    {
+        return view('tarefas.edit', ['tarefa'=> $tarefa]);
+    }
+
+    public function update(Tarefa $tarefa, Request $request)
+    {
+        // Lógica para atualizar a tarefa no banco de dados
+        $data = $request->validate([
+            'titulo' => 'required|string|max:255',
+            'descricao' => 'required',
+            'data_vencimento' => 'required|date',
+            'status' => [Rule::enum(StatusTarefa::class)],// ainda nao entendi como validar enum
+        ]);
+
+        $tarefa->update($data);
+
+        return redirect(route('tarefas.index'))
+            ->with('success', 'Tarefa alterada com sucesso!');
+    }
+
+    public function destroy(Tarefa $tarefa)
+    {
+        // Lógica para excluir a tarefa do banco de dados
+        $tarefa->delete();
+        return redirect(route('tarefas.index'))
+            ->with('success', 'Tarefa excluida com sucesso!');
+    }
+
     public function show($id)
     {
         return view('tarefas.show', compact('id'));
-    }
-
-    public function edit($id)
-    {
-        return view('tarefas.edit', compact('id'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        // Lógica para atualizar a tarefa no banco de dados
-        return redirect()->route('tarefas.index');
-    }
-
-    public function destroy($id)
-    {
-        // Lógica para excluir a tarefa do banco de dados
-        return redirect()->route('tarefas.index');
     }
 }
